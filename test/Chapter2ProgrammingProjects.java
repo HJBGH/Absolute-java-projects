@@ -10,9 +10,11 @@ public class Chapter2ProgrammingProjects {
 	 * None of this code handles exceptions properly because I'm "programming by the book" so to speak - following the 
 	 * textbook I'm using.
 	 */
+	private static final double PI = 3.14159;
+	
 	public static void main(String args[])
 	{
-		incomeTaxCalculator();
+		circleStats();
 		return;
 	}
 	
@@ -59,5 +61,29 @@ public class Chapter2ProgrammingProjects {
 		System.out.printf("Net Income\t\t%s%n", outputNumberFormat.format(netIncome));
 		System.out.printf("Tax payable\t\t%s%n", outputNumberFormat.format(netIncome * (taxRate/100)));
 		
+	}
+	
+	private static void sumAndAverage()
+	{
+		Scanner keyboardScanner = new Scanner(System.in);
+		
+		System.out.println("Enter three integers:");
+		
+		int x = keyboardScanner.nextInt();
+		int y = keyboardScanner.nextInt();
+		int z = keyboardScanner.nextInt();
+		System.out.printf("sum: %d%naverage: %f%n", x+y+z, (x+y+z)/3.0);
+	}
+	
+	private static void circleStats()
+	{
+		Scanner keyboardScanner = new Scanner(System.in);
+		
+		System.out.println("Provide a radius");
+		double radius = keyboardScanner.nextDouble();
+		
+		System.out.printf("Diameter:\t%f%n", radius*2);
+		System.out.printf("Circumference:%f%n", PI*(radius*2));
+		System.out.printf("Area of Circle:%f%n", PI*(radius*radius));
 	}
 }
