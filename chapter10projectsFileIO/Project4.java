@@ -21,6 +21,8 @@ public class Project4 {
 	public static void main(String args[])
 	{
 		int lineCount = 0;
+		double temp; //holding variable.
+		int i; //iterator.
 		Scanner fileStreamScanner = null;
 		
 		try
@@ -33,6 +35,16 @@ public class Project4 {
 			System.exit(0);
 		}
 		//the other shite
+		while(fileStreamScanner.hasNext())
+		{
+			temp = fileStreamScanner.nextDouble();
+			System.out.printf("YEAR %02d:", lineCount+1); //ALERT ALERT, MAGIC NUMBER, BAD PROGRAMMER, BAD
+			for(i = 0; i < temp/100; i++)
+				System.out.print("*");
+			System.out.println();
+			lineCount++;
+		}
+		fileStreamScanner.close();
 	}
 	
 	
