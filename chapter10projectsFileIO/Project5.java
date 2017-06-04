@@ -7,9 +7,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.BufferedReader;
 import java.io.File;
 
-import java.lang.StringBuffer;
+import java.lang.Character;
 
 /**
  * Write a program to edit text files for extra blanks. The program will replace any
@@ -34,14 +36,60 @@ public class Project5 {
 	public static void main(String args[])
 	{
 		//TODO
+		//get filename from user
+		String filename = "";
+		Scanner keyboardScanner = new Scanner(System.in);
+		BufferedReader fileReader = null; //Init to null, keep compiler happy. You cannot argue with the compiler.
+		PrintWriter fileWriter = null; // same as above
+		File outFile; //<-- No fucking clue what I'm supposed to do with this yet
+		int temp;
+		boolean blankPrevious = false; //initialize to false, obviously there's no character before the first
+
+		try
+		{
+			System.out.println("Enter filename.");
+			filename = keyboardScanner.nextLine();
+			fileReader = new BufferedReader(new FileReader(filename)); //only using a BR you can read char by char.
+			fileWriter = new PrintWriter(new FileOutputStream(generateSwapFileObject(filename)));//ripe for chaining pattern
+			while((temp = fileReader.read()) >= 0)
+			{
+				if(Character.isWhitespace((char)temp) && !blankPrevious)
+				{
+					blankPrevious = true;
+					System.out.print((char)temp);
+				}
+				if(!Character.isWhitespace((char)temp))
+				{
+					blankPrevious = false;
+					System.out.print((char)temp);
+				}
+				
+			}
+			System.out.println();
+			//close streams
+			fileReader.close();
+			fileWriter.close();
+		}
+		catch (FileNotFoundException fnfe)
+		{
+			System.out.println("file not found");
+			System.out.println(fnfe.getMessage());
+			System.exit(0);
+		}
+		catch (Exception e)
+		{
+			System.out.println("Generic exception caught in generic catch statement.");
+			System.out.println(e.getMessage());
+			System.exit(0);
+		}
+			
 		//determine filename for swapfile
 		//open input stream, open output stream
 		//do the thing
-		//close streams
-		System.out.println(generateSwapFileName("Aids"));
+		
 	}
 	
-	private static String generateSwapFileName(String originalFilename){
+	private static File generateSwapFileObject(String originalFilename){
 		File swapFileObject = null;
 		Random random = new Random();
 		do
@@ -49,7 +97,8 @@ public class Project5 {
 			swapFileObject = new File(originalFilename + ".swap" + random.nextInt(100));
 		}
 		while(swapFileObject.exists());
-		return swapFileObject.getName();
+		//maybe return name?
+		return swapFileObject;
 	}
 	
 }
