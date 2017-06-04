@@ -38,7 +38,9 @@ public class Project2 {
 				highest=temp;
 			if(temp<lowest)
 				lowest=temp;
+			inputStreamScanner.nextLine();
 		}
+		inputStreamScanner.close();
 		System.out.printf("Lowest: %d%nHighest: %d%n", lowest, highest);
 	}
 }
