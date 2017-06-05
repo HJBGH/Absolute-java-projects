@@ -38,10 +38,11 @@ public class Project5 {
 		//TODO
 		//get filename from user
 		String filename = "";
+		File swapFileObject = null;
 		Scanner keyboardScanner = new Scanner(System.in);
 		BufferedReader fileReader = null; //Init to null, keep compiler happy. You cannot argue with the compiler.
 		PrintWriter fileWriter = null; // same as above
-		File outFile; //<-- No fucking clue what I'm supposed to do with this yet
+
 		int temp;
 		boolean blankPrevious = false; //initialize to false, obviously there's no character before the first
 
@@ -49,26 +50,40 @@ public class Project5 {
 		{
 			System.out.println("Enter filename.");
 			filename = keyboardScanner.nextLine();
-			fileReader = new BufferedReader(new FileReader(filename)); //only using a BR you can read char by char.
-			fileWriter = new PrintWriter(new FileOutputStream(generateSwapFileObject(filename)));//ripe for chaining pattern
+			swapFileObject = generateSwapFileObject(filename);
+			fileReader = new BufferedReader(new FileReader(filename)); //only using a BR you can read char by char. fileReader is a really bad name for that var.
+			fileWriter = new PrintWriter(new FileOutputStream(swapFileObject));//ripe for chaining pattern
 			while((temp = fileReader.read()) >= 0)
 			{
 				if(Character.isWhitespace((char)temp) && !blankPrevious)
 				{
 					blankPrevious = true;
-					System.out.print((char)temp);
+					fileWriter.append((char)temp);
 				}
 				if(!Character.isWhitespace((char)temp))
 				{
 					blankPrevious = false;
-					System.out.print((char)temp);
+					fileWriter.append((char)temp);
 				}
-				
-			}
-			System.out.println();
+			}			
 			//close streams
 			fileReader.close();
 			fileWriter.close();
+			
+			//re-open streams with the original being written to and the swapfile being read from.
+			//I really don't think I should be constructing new objects here but I can't find out
+			//how to change fileReader to a new FileReader target
+			fileReader = new BufferedReader(new FileReader(swapFileObject));
+			fileWriter = new PrintWriter(new FileOutputStream(filename));
+			while((temp = fileReader.read()) >= 0)
+			{
+				fileWriter.append((char)temp);
+			}
+			//close streams for second and final time.
+			fileReader.close();
+			fileWriter.close();
+			
+			swapFileObject.delete();
 		}
 		catch (FileNotFoundException fnfe)
 		{
