@@ -22,6 +22,7 @@ public class Project1Tests {
 		assert(result == 6);
 	}
 	
+	//
 	@Test
 	public void typeStringTest()
 	{
