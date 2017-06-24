@@ -28,8 +28,21 @@ public class NameCollection {
 	{
 		Enumeration eggs = new Enumeration()
 			{
-			
-			}
+				private int pointer = 0; //this is probably the wrong way to go about this
+				
+				public String getNext()
+				{
+					//the fact that I can access names from here is very weird
+					return names[pointer];
+				}
+				
+				public boolean hasNext()
+				{
+					if(pointer >= names.length)
+						return false;
+					return true; //haven't bothered with the else, maybe that's bad practise
+				}
+			}; //needs a semicolon, this entire anonymous declaration is basically one statement
 		return eggs;
 		//complete code here using inner class
 	}
