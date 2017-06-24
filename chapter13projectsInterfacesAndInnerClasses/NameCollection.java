@@ -33,7 +33,14 @@ public class NameCollection {
 				public String getNext()
 				{
 					//the fact that I can access names from here is very weird
-					return names[pointer];
+					try
+					{
+						return names[pointer++];
+					}
+					catch (Exception e)
+					{
+						throw e;
+					}
 				}
 				
 				public boolean hasNext()
