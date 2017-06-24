@@ -7,6 +7,11 @@ interface Enumeration
 	public Object getNext(); //Returns the next element in the collection as an Object
 }
 
+/**
+ * This is class is the fulfillment of the programming project suggestion 13.3 from Walter Satvich's Absolute Java
+ * @author hb
+ *
+ */
 public class NameCollection {
 	String[] names;
 	
