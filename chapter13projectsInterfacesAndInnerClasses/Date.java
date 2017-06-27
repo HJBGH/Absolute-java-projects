@@ -20,7 +20,7 @@ public class Date
 			System.exit(0);
 		}
 		
-		month = aDate.month; //Doesn't this cause a privacy leak?
+		month = aDate.month; //Doesn't this cause a privacy leak? It does not.
 		day = aDate.day;
 		year = aDate.year;
 	}

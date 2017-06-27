@@ -20,6 +20,6 @@ public class Account {
 	
 	public Person getOwner()
 	{
-		return owner;
+		return owner; //this should return a copy
 	}
 }
