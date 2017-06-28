@@ -2,8 +2,6 @@ package chapter13projectsInterfacesAndInnerClasses;
 
 import java.util.Scanner;
 
-import chapter13projectsInterfacesAndInnerClasses.Date;
-
 /**
  * A re-implementation as part of project 13.8 of the Person class from display 5.19 of Absolute Java 
  * @author hb
@@ -12,7 +10,7 @@ import chapter13projectsInterfacesAndInnerClasses.Date;
 public class Person implements Cloneable{
 	private String name;
 	private Date born;
-	private Date died; //if this is null the meat is still twitching.
+	private Date died; //if this is null the person is still alive.
 	
 	public Person(String initialName, Date birthDate, Date deathDate)
 	{
@@ -27,7 +25,7 @@ public class Person implements Cloneable{
 		}
 		else
 		{
-			System.out.println("Inconsistent dates, Aborting");
+			System.out.println("Inconsistent dates. Aborting.");
 			System.exit(0);
 		}
 	}
@@ -53,9 +51,11 @@ public class Person implements Cloneable{
 			died = new Date(original.died);
 	}
 	
+	//I'm not sure we need this method
 	public void set(String newName, Date birthDate, Date deathDate)
 	{
 		//Definition for this method is in Self Test Exercise 4.1
+		//Seriously I can't find exercise 4.1
 	}
 	
 	public String toString()
