@@ -4,6 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 import javax.swing.JButton;
@@ -88,18 +91,30 @@ public class EnglishToPigLatin extends JFrame implements ActionListener{
 			StringBuilder outStringBuilder = new StringBuilder(); 
 			Scanner stringScanner = new Scanner(arg);
 			String word;
-			char[] vowels = {'a','e','i','o','u','A','E','I','O','U'};
+			List vowels = Arrays.asList(new Character [] {'a','e','i','o','u','A','E','I','O','U'});
 			while(stringScanner.hasNext())
 			{
 				word = stringScanner.next();
-				for(char vowel : vowels)
+				if(vowels.contains(word.charAt(0)))
 				{
-					if(word.charAt(0) == vowel)
+					System.out.println("It's a vowel!");//do the stuff.
+					outStringBuilder.append(word + "way");
+				}
+				else
+				{
+					if(isNumeric(word))
 					{
-						System.out.println("It's a vowel!");//do the stuff.
+						outStringBuilder.append(word);
+						//It's tempting to put a continue here
+					}
+					else
+					{
+						outStringBuilder.append(word.subSequence(1, word.length()-1));
+						outStringBuilder.append(word.charAt(0));
+						outStringBuilder.append("ay");
 					}
 				}
-				outStringBuilder.append(word); //you idiot
+				outStringBuilder.append(" "); //you idiot
 			}
 			return outStringBuilder.toString();
 		}
@@ -109,7 +124,21 @@ public class EnglishToPigLatin extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent arg0) {
 		String input = infield.getText();
 		String output = Translator.translate(input);
+		outfield.setText("");
 		outfield.setText(output);
 	}
 
+	//static because there's no point in have multiple instances of this method, also the inner class needs access
+	private static boolean isNumeric(String str)
+	{
+		try
+		{
+			Double.parseDouble(str);
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
+		return true;
+	}
 }
