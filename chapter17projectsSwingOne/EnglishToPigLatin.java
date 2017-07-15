@@ -9,6 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 /**
@@ -18,11 +19,13 @@ import javax.swing.JTextField;
  */
 public class EnglishToPigLatin extends JFrame implements ActionListener{
 	//window dimension constants
-	private static final int HEIGHT = 300;
+	private static final int HEIGHT = 350;
 	private static final int WIDTH = 600;
 	private static final String WINDOW_NAME = "English -> Pig Latin";
-	private static final int IN_LENGTH = 32;
-	private JTextField infield;
+	private static final int CHARS_PER_LINE = 32;
+	private static final int LINES = 5;
+	private JTextArea infield;
+	private JTextArea outfield;
 	
 	public static void main(String args[]){
 		EnglishToPigLatin gooey = new EnglishToPigLatin();
@@ -41,8 +44,8 @@ public class EnglishToPigLatin extends JFrame implements ActionListener{
 		inputPanel.setLayout(new BorderLayout());
 	    
 		//set up input field and label
-		infield = new JTextField(IN_LENGTH);
-		JLabel aLabel = new JLabel("Enter english here:");
+		infield = new JTextArea(LINES, CHARS_PER_LINE);
+		JLabel aLabel = new JLabel("Enter English here:");
 		
 		inputPanel.add(infield, BorderLayout.EAST);
 		inputPanel.add(aLabel, BorderLayout.WEST);
@@ -54,9 +57,19 @@ public class EnglishToPigLatin extends JFrame implements ActionListener{
 		translateThisShit.addActionListener(this);
 		buttonPanel.add(translateThisShit);
 		
+		//set up output Panel and contained elements
+		JPanel outputPanel = new JPanel();
+		outputPanel.setLayout(new BorderLayout());
+		outfield = new JTextArea(LINES*2, CHARS_PER_LINE); //It's lazy to multiply lines by a magic number
+		JLabel anotherLabel = new JLabel("Read Pig Latin here:");
+		
+		outputPanel.add(outfield, BorderLayout.EAST);
+		outputPanel.add(anotherLabel, BorderLayout.WEST);
+		
 		//add elements to window in the order you want them to appear (flow layout)
 		this.add(inputPanel);
 		this.add(buttonPanel);
+		this.add(outputPanel);
 		
 	}
 	
