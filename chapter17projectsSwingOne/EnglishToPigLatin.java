@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Scanner;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -13,7 +14,10 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 /**
- * Response to project suggestion 1 of chapter 17 of Absolute Java 
+ * Response to project suggestion 1 of chapter 17 of Absolute Java. 
+ * The project suggestion states that the programmer does not have to concern
+ * themselves with punctuation. I.E; assume that all you get is English words,
+ * seeing as this project is about familiarizing myself with swing, I will comply.
  * @author hb
  *
  */
@@ -24,6 +28,7 @@ public class EnglishToPigLatin extends JFrame implements ActionListener{
 	private static final String WINDOW_NAME = "English -> Pig Latin";
 	private static final int CHARS_PER_LINE = 32;
 	private static final int LINES = 5;
+	//declare the text areas here so that they're available to the translator and the action handler/listener
 	private JTextArea infield;
 	private JTextArea outfield;
 	
@@ -60,7 +65,8 @@ public class EnglishToPigLatin extends JFrame implements ActionListener{
 		//set up output Panel and contained elements
 		JPanel outputPanel = new JPanel();
 		outputPanel.setLayout(new BorderLayout());
-		outfield = new JTextArea(LINES*2, CHARS_PER_LINE); //It's lazy to multiply lines by a magic number
+		outfield = new JTextArea(LINES*2, CHARS_PER_LINE); 
+		outfield.setEditable(false);//It's lazy to multiply lines by a magic number
 		JLabel anotherLabel = new JLabel("Read Pig Latin here:");
 		
 		outputPanel.add(outfield, BorderLayout.EAST);
@@ -73,14 +79,37 @@ public class EnglishToPigLatin extends JFrame implements ActionListener{
 		
 	}
 	
+	//I'm fairly certain this doesn't need it's own class
 	private static class Translator
 	{
 		//write translation bits in here.
+		public static String translate(String arg)
+		{
+			StringBuilder outStringBuilder = new StringBuilder(); 
+			Scanner stringScanner = new Scanner(arg);
+			String word;
+			char[] vowels = {'a','e','i','o','u','A','E','I','O','U'};
+			while(stringScanner.hasNext())
+			{
+				word = stringScanner.next();
+				for(char vowel : vowels)
+				{
+					if(word.charAt(0) == vowel)
+					{
+						System.out.println("It's a vowel!");//do the stuff.
+					}
+				}
+				outStringBuilder.append(word); //you idiot
+			}
+			return outStringBuilder.toString();
+		}
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		System.out.println("Ich brauche mehr Suessigkeiten.");
+		String input = infield.getText();
+		String output = Translator.translate(input);
+		outfield.setText(output);
 	}
 
 }
