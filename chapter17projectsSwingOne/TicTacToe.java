@@ -1,10 +1,14 @@
 package chapter17projectsSwingOne;
 
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 /**
  * Response to project 2 of chapter 17 of the Absolute Java textbook.
@@ -34,10 +38,27 @@ public class TicTacToe{
 		
 		public View()
 		{
+			//set window properties.
 			super(WINDOW_NAME);
 			this.setSize(WIDTH, HEIGHT);
 			this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			this.setLayout(new BorderLayout());
+			
+			//message display box and panel
+			JPanel messagePanel = new JPanel();
+			JTextField messageField = new JTextField();
+			messageField.setEditable(false);
+			messagePanel.add(messageField);
+			this.add(messagePanel, BorderLayout.NORTH);
+			
+			//Set up board
+			JPanel boardPanel = new JPanel();
+			boardPanel.setLayout(new GridLayout(3,3));
+			//JButtons
+			for(int i = 0; i<6; i++)
+			{
+				//we don't actually need to know which button is which. we can use 
+			}
 		}
 
 
@@ -51,7 +72,7 @@ public class TicTacToe{
 		@Override
 		public void notify(String news) {
 			// TODO Auto-generated method stub
-			
+			//Case statements here for various events in the model
 		}
 	}
 	
@@ -68,25 +89,35 @@ public class TicTacToe{
 	
 	private static class Model implements Watchable
 	{
+		//List of watchers to notify when the model changes
+		ArrayList<Watcher> watchers = new ArrayList<Watcher>();
 
 		@Override
-		public void addWatcher(Watcher watcher) {
-			// TODO Auto-generated method stub
-			
+		public void addWatcher(Watcher newWatcher) {
+			watchers.add(newWatcher);
 		}
 
 		@Override
-		public void notifyAll(Watcher watcher) {
-			// TODO Auto-generated method stub
-			
+		public void notifyWatchers() {
+			for(Watcher watcher : watchers)
+			{
+				watcher.notify(this);
+			}
 		}
 
 		@Override
 		public void removeAll(Watcher watcher) {
-			// TODO Auto-generated method stub
-			
+			//potential for memory leak?
+			watchers = new ArrayList<Watcher>();
 		}
-		//this will have all the data about the game in it
+
+		@Override
+		public void notifyWatchersOfNews(String news) {
+			for(Watcher watcher : watchers)
+			{
+				watcher.notify(news);
+			}
+		}
 	}
 
 }

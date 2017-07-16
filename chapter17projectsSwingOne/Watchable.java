@@ -1,6 +1,5 @@
 package chapter17projectsSwingOne;
 
-import java.util.ArrayList;
 
 /**
  * One off interface for implementing the observer pattern. This class isn't really generic
@@ -9,6 +8,7 @@ import java.util.ArrayList;
  */
 public interface Watchable{
 	void addWatcher(Watcher watcher);
-	void notifyAll(Watcher watcher);
+	void notifyWatchers(); //Simply calls notify(Watchable watchable) on all watchers
+	void notifyWatchersOfNews(String news); //Calls notify(String news) on all watchers, 
 	void removeAll(Watcher watcher);
 }
