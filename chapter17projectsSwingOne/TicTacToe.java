@@ -30,8 +30,11 @@ public class TicTacToe{
 		//init all the shit
 		//View theView = new View();
 		TicTacToe tictactoe = new TicTacToe();
-		TicTacToe.Controller theController = tictactoe.new Controller();
-		TicTacToe.View theView = tictactoe.new View(theController);
+		TicTacToe.View theView = tictactoe.new View();
+		TicTacToe.Model theModel = tictactoe.new Model();
+		theModel.addWatcher(theView);
+		TicTacToe.Controller theController = tictactoe.new Controller(theView, theModel);
+		
 	}
 
 	//This should Implement some sort of listener that listens to changes in the model.
@@ -40,21 +43,20 @@ public class TicTacToe{
 		private static final int HEIGHT = 200;
 		private static final int WIDTH = 150;
 		private static final String WINDOW_NAME = "Tic-Tac-Toe";
-		private JButton buttons[][] = new JButton[BOARD_HEIGHT][BOARD_WIDTH];
-		private Controller the_controller;
+		protected JButton buttons[] = new JButton[BOARD_HEIGHT*BOARD_WIDTH];
+		private JTextField messageField;
 		
-		public View(Controller controller)
+		public View()
 		{
 			//set window properties.
 			super(WINDOW_NAME);
 			this.setSize(WIDTH, HEIGHT);
 			this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			this.setLayout(new BorderLayout());
-			the_controller = controller;
 			
 			//message display box and panel
 			JPanel messagePanel = new JPanel();
-			JTextField messageField = new JTextField();
+			this.messageField = new JTextField();//we need to edit the contents of this later, so it has to be a member
 			messageField.setEditable(false);
 			messagePanel.add(messageField);
 			this.add(messagePanel, BorderLayout.NORTH);
@@ -63,14 +65,10 @@ public class TicTacToe{
 			JPanel boardPanel = new JPanel();
 			boardPanel.setLayout(new GridLayout(BOARD_HEIGHT,BOARD_WIDTH));
 			//JButtons
-			for(int i = 0; i<BOARD_HEIGHT; i++)
+			for(int i = 0; i<BOARD_HEIGHT*BOARD_WIDTH; i++)
 			{
-				for(int k = 0; k<BOARD_WIDTH; k++)
-				{
-					buttons[i][k] = new JButton(" ");
-					buttons[i][k].addActionListener(the_controller);
-					boardPanel.add(buttons[i][k]); //add the newly created button to the boardpanel. 
-				}
+				buttons[i] = new JButton(" ");
+				boardPanel.add(buttons[i]); //add the newly created button to the boardpanel. 
 			}
 			this.add(boardPanel, BorderLayout.CENTER);
 			this.setVisible(true);
@@ -87,16 +85,50 @@ public class TicTacToe{
 
 		@Override
 		public void notify(String news) {
-			// TODO Auto-generated method stub
-			//Case statements here for various events in the model
+			System.out.println("Here's your news you dumb bastard:");
+			System.out.println(news);
+			switch(news)
+			{
+			case("DRAW"):
+				messageField.setText("DRAW");
+				break;
+			default:
+				//this really should have a better delimiter, also; this is abuse of the default case.
+				System.out.println("substring of news: " + news.substring(1));
+				int buttonNum = Integer.parseInt(news.substring(1));
+				buttons[buttonNum].setText(news.substring(0,1));
+			}
 		}
 	}
 	
 	private class Controller implements ActionListener 
 	{
+		View theView;
+		Model theModel;
+		public Controller(View theView, Model theModel)
+		{
+			this.theView = theView;
+			this.theModel = theModel;
+			
+			for(JButton button : theView.buttons)
+			{
+				button.addActionListener(this);
+			}
+		}
+		
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			System.out.println("A button was clicked");
+			JButton source = (JButton)arg0.getSource(); //idk if it's safe to be casting like this.
+			int cell = 0;
+			source.setEnabled(false);
+			for(JButton button : theView.buttons)
+			{
+				if(button == source)
+				{
+					theModel.placeMark(cell);
+				}
+				cell++;
+			}
 		}
 		
 	}
@@ -105,15 +137,38 @@ public class TicTacToe{
 	{
 		//List of watchers to notify when the model changes
 		ArrayList<Watcher> watchers = new ArrayList<Watcher>();
-		private static final char ECS = 'X';
+		private static final char EKS = 'X';
 		private static final char OH = 'O';
-		private int turn = 0;
-		private char board[][] = new char[BOARD_HEIGHT][BOARD_WIDTH];
+		private int turn = 1;
+		//I represent the board here as a one dimensional array, each group of three is one row in the board.
+		private char board[] = new char[BOARD_HEIGHT*BOARD_WIDTH];
 		
-		private String checkForWin()
+		/**Main method for acting upon the model, provide an int and the model will automatically assign a 
+		 * mark to the corresponding board cell based on the current turn. X always goes on odd turns, O on even.
+		 */
+		public void placeMark(int cell){
+			System.out.println("turn:" + turn);
+			if(turn%2==0)
+			{
+				board[cell]=OH;
+				notifyWatchersOfNews(OH + Integer.toString(cell));
+			}
+			else
+			{
+				board[cell]=EKS;
+			    notifyWatchersOfNews(EKS + Integer.toString(cell));
+			}
+			checkForWin();
+			turn+=1;
+		}
+			
+		
+		public void checkForWin()
 		{
-			return "FUCK YOU";//really what we need is a message object
+			//really what we need is a message object
 			//you'll not need to check who wins here.
+			if(turn >= 9)
+				notifyWatchersOfNews("DRAW");
 		}
 		
 		@Override
