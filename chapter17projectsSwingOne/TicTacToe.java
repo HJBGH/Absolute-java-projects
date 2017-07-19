@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -20,29 +21,35 @@ import javax.swing.JTextField;
  * proper MVC. An implementation of the observer pattern is used to make the View watch the model.
  */
 public class TicTacToe{
+	private static final int BOARD_HEIGHT = 3;
+	private static final int BOARD_WIDTH = 3;
 	
 	public static void main(String args[])
 	{
 		//init all the shit
-		View theView = new View();
-		theView.setVisible(true);
+		//View theView = new View();
+		TicTacToe tictactoe = new TicTacToe();
+		TicTacToe.Controller theController = tictactoe.new Controller();
+		TicTacToe.View theView = tictactoe.new View(theController);
 	}
 
 	//This should Implement some sort of listener that listens to changes in the model.
-	private static class View extends JFrame implements Watcher
+	private class View extends JFrame implements Watcher
 	{
-		private static final int HEIGHT = 300;
-		private static final int WIDTH = 200;
+		private static final int HEIGHT = 200;
+		private static final int WIDTH = 150;
 		private static final String WINDOW_NAME = "Tic-Tac-Toe";
+		private JButton buttons[][] = new JButton[BOARD_HEIGHT][BOARD_WIDTH];
+		private Controller the_controller;
 		
-		
-		public View()
+		public View(Controller controller)
 		{
 			//set window properties.
 			super(WINDOW_NAME);
 			this.setSize(WIDTH, HEIGHT);
 			this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			this.setLayout(new BorderLayout());
+			the_controller = controller;
 			
 			//message display box and panel
 			JPanel messagePanel = new JPanel();
@@ -53,13 +60,21 @@ public class TicTacToe{
 			
 			//Set up board
 			JPanel boardPanel = new JPanel();
-			boardPanel.setLayout(new GridLayout(3,3));
+			boardPanel.setLayout(new GridLayout(BOARD_HEIGHT,BOARD_WIDTH));
 			//JButtons
-			for(int i = 0; i<6; i++)
+			for(int i = 0; i<BOARD_HEIGHT; i++)
 			{
-				//we don't actually need to know which button is which. we can use 
+				for(int k = 0; k<BOARD_WIDTH; k++)
+				{
+					buttons[i][k] = new JButton(" ");
+					buttons[i][k].addActionListener(the_controller);
+					boardPanel.add(buttons[i][k]); //add the newly created button to the boardpanel. 
+				}
 			}
+			this.add(boardPanel, BorderLayout.CENTER);
+			this.setVisible(true);
 		}
+
 
 
 		@Override
@@ -76,22 +91,23 @@ public class TicTacToe{
 		}
 	}
 	
-	private static class Controller implements ActionListener
+	private class Controller implements ActionListener 
 	{
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			// TODO Auto-generated method stub
-			
+			System.out.println("A button was clicked");
 		}
 		
 	}
 	
-	private static class Model implements Watchable
+	private class Model implements Watchable
 	{
 		//List of watchers to notify when the model changes
 		ArrayList<Watcher> watchers = new ArrayList<Watcher>();
-
+		private char board[][] = new char[BOARD_HEIGHT][BOARD_WIDTH];
+		
+		
 		@Override
 		public void addWatcher(Watcher newWatcher) {
 			watchers.add(newWatcher);
