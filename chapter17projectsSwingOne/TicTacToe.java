@@ -93,7 +93,6 @@ public class TicTacToe{
 	
 	private class Controller implements ActionListener 
 	{
-
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			System.out.println("A button was clicked");
@@ -105,16 +104,26 @@ public class TicTacToe{
 	{
 		//List of watchers to notify when the model changes
 		ArrayList<Watcher> watchers = new ArrayList<Watcher>();
+		private static final char ECS = 'X';
+		private static final char OH = 'O';
+		private int turn = 0;
 		private char board[][] = new char[BOARD_HEIGHT][BOARD_WIDTH];
 		
+		private String checkForWin()
+		{
+			return "FUCK YOU";//really what we need is a message object
+			//you'll not need to check who wins here.
+		}
 		
 		@Override
-		public void addWatcher(Watcher newWatcher) {
+		public void addWatcher(Watcher newWatcher)
+		{
 			watchers.add(newWatcher);
 		}
 
 		@Override
-		public void notifyWatchers() {
+		public void notifyWatchers() 
+		{
 			for(Watcher watcher : watchers)
 			{
 				watcher.notify(this);
@@ -122,13 +131,15 @@ public class TicTacToe{
 		}
 
 		@Override
-		public void removeAll(Watcher watcher) {
+		public void removeAll(Watcher watcher) 
+		{
 			//potential for memory leak?
 			watchers = new ArrayList<Watcher>();
 		}
 
 		@Override
-		public void notifyWatchersOfNews(String news) {
+		public void notifyWatchersOfNews(String news) 
+		{
 			for(Watcher watcher : watchers)
 			{
 				watcher.notify(news);
