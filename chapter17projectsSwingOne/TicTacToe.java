@@ -20,6 +20,7 @@ import javax.swing.JTextField;
  * by the view which it uses to update itself. It's probably a bit to convoluted to be considered
  * proper MVC. An implementation of the observer pattern is used to make the View watch the model.
  */
+//clearly I've fucked something up here, I have to go research MVC properly
 public class TicTacToe{
 	private static final int BOARD_HEIGHT = 3;
 	private static final int BOARD_WIDTH = 3;
