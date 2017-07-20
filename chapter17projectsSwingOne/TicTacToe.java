@@ -189,9 +189,23 @@ public class TicTacToe{
 					return; 
 				}
 			}
+			//check for vertical wins
 			for(int i = 0; i<=2; i++)
 			{
-				
+				if((board[i] == board[i+3] && board[i+3] == board[i+6]) && board[i] != '\u0000' )
+				{
+					System.out.println("Winrar:" + board[i]);
+					notifyWatchersOfNews(Character.toString(board[i]) + "WINS");
+					return; 
+				}
+			}
+			/**	check for diagonal wins, this is the worst if statement/general programming I've ever written
+				I seriously need to re-think this bit
+			*/
+			if(((board[0]==board[4]&&board[4]==board[8])||(board[2]==board[4]&&board[4]==board[6]))&&board[4]!='\u0000')
+			{
+				notifyWatchersOfNews(Character.toString(board[4]) + "WINS");
+				return; 
 			}
 			if(turn >= 9)
 				notifyWatchersOfNews("DRAW");
