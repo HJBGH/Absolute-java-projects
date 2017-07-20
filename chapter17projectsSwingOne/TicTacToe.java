@@ -20,15 +20,13 @@ import javax.swing.JTextField;
  * by the view which it uses to update itself. It's probably a bit to convoluted to be considered
  * proper MVC. An implementation of the observer pattern is used to make the View watch the model.
  */
-//clearly I've fucked something up here, I have to go research MVC properly
 public class TicTacToe{
 	private static final int BOARD_HEIGHT = 3;
 	private static final int BOARD_WIDTH = 3;
 	
 	public static void main(String args[])
 	{
-		//init all the shit
-		//View theView = new View();
+		//init all the stuff
 		TicTacToe tictactoe = new TicTacToe();
 		TicTacToe.View theView = tictactoe.new View();
 		TicTacToe.Model theModel = tictactoe.new Model();
@@ -85,16 +83,28 @@ public class TicTacToe{
 
 		@Override
 		public void notify(String news) {
-			System.out.println("Here's your news you dumb bastard:");
-			System.out.println(news);
+			System.out.println("Here's your news you dumb bastard: " + news);
 			switch(news)
 			{
 			case("DRAW"):
 				messageField.setText("DRAW");
 				break;
+			case("OWINS"):
+				messageField.setText("O Wins!");
+				for(JButton button : buttons)
+				{
+					button.setEnabled(false);
+				}
+				break;
+			case("XWINS"):
+				messageField.setText("X Wins!");
+				for(JButton button : buttons)
+				{
+					button.setEnabled(false);
+				}
+				break;			
 			default:
-				//this really should have a better delimiter, also; this is abuse of the default case.
-				System.out.println("substring of news: " + news.substring(1));
+				System.out.println("Default case entered.");
 				int buttonNum = Integer.parseInt(news.substring(1));
 				buttons[buttonNum].setText(news.substring(0,1));
 			}
@@ -147,7 +157,7 @@ public class TicTacToe{
 		 * mark to the corresponding board cell based on the current turn. X always goes on odd turns, O on even.
 		 */
 		public void placeMark(int cell){
-			System.out.println("turn:" + turn);
+			System.out.println("turn: " + turn);
 			if(turn%2==0)
 			{
 				board[cell]=OH;
@@ -167,6 +177,22 @@ public class TicTacToe{
 		{
 			//really what we need is a message object
 			//you'll not need to check who wins here.
+			if(turn < 5)
+				return;
+			//check for horizontal wins
+			for(int i = 0; i<=6; i+=3)
+			{
+				if((board[i] == board[i+1] && board[i+1] == board[i+2]) && board[i] != '\u0000' )
+				{
+					System.out.println("Winrar:" + board[i]);
+					notifyWatchersOfNews(Character.toString(board[i]) + "WINS");
+					return; 
+				}
+			}
+			for(int i = 0; i<=2; i++)
+			{
+				
+			}
 			if(turn >= 9)
 				notifyWatchersOfNews("DRAW");
 		}
