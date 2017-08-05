@@ -14,7 +14,7 @@ import javax.swing.JTextField;
 /**
  * Response to project 2 of chapter 17 of the Absolute Java textbook.
  * @author hb
- * For shits and giggles I'm trying to implement this with MVC.
+ * For giggles I'm trying to implement this with MVC.
  * It doesn't work exactly but the idea is that the controller makes changes to the model after
  * catching events thrown by the parts of the view, the model then throws events which are caught 
  * by the view which it uses to update itself. It's probably a bit to convoluted to be considered
