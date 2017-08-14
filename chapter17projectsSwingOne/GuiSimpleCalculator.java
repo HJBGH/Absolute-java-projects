@@ -32,6 +32,9 @@ public class GuiSimpleCalculator extends JFrame implements ActionListener{
 	private JTextField resultJTF;
 	private JTextField operandJTF;
 	
+	private double result = 0; //initialize the variables to avoid problems later
+	private double operand = 0;
+	
 	public static void main(String args[])
 	{
 		GuiSimpleCalculator jimmy = new GuiSimpleCalculator();
@@ -57,6 +60,7 @@ public class GuiSimpleCalculator extends JFrame implements ActionListener{
 		resultPanel.add(resultJTF);
 		JButton resetButton = new JButton("reset");
 		resetButton.setName("reset");
+		resetButton.addActionListener(this);
 		resultPanel.add(resetButton);
 		this.add(resultPanel);
 		
@@ -66,10 +70,11 @@ public class GuiSimpleCalculator extends JFrame implements ActionListener{
 		opPanel.add(operandJTF);
 		JButton clearButton = new JButton("clear");
 		clearButton.setName("clear");
+		clearButton.addActionListener(this);
 		opPanel.add(clearButton);
 		this.add(opPanel);
 		
-		//set up buttons
+		//set up and add number buttons
 		JButton anonymousButton;
 		buttonsPanel.setLayout(new GridLayout(4, 3));
 		for(int i = 0; i<=9; i++)
@@ -78,10 +83,16 @@ public class GuiSimpleCalculator extends JFrame implements ActionListener{
 			anonymousButton.addActionListener(this);
 			buttonsPanel.add(anonymousButton);
 		}
+		//add operation buttons
 		JButton plus = new JButton("+");
+		plus.addActionListener(this);
 		JButton minus = new JButton("-");
+		minus.addActionListener(this);
 		JButton times = new JButton("*");
+		times.addActionListener(this);
 		JButton div = new JButton("/");
+		div.addActionListener(this);
+		//no equals buttons, operations are performed when their related button is pressed
 		buttonsPanel.add(plus);
 		buttonsPanel.add(minus);
 		buttonsPanel.add(times);
@@ -91,13 +102,31 @@ public class GuiSimpleCalculator extends JFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		System.out.println("Button: " + ((JButton)arg0.getSource()).getText());
+		//we could just use a massive switch statement in here
 		try{
-			Integer.parseInt(((JButton)arg0.getSource()).getText());
+			Integer.parseInt(((JButton)arg0.getSource()).getText()); //ppor use of parseInt, but it gets the job done
 			operandJTF.setText(operandJTF.getText() + ((JButton)arg0.getSource()).getText());
 		}
 		catch (Exception e)
 		{
 			//empty catch block
+		}
+		try{
+			switch(((JButton)arg0.getSource()).getText())
+			//find the operation
+			{
+			case "+":
+				operand = Double.parseDouble(operandJTF.getText());
+				operandJTF.setText("");
+				result = result+operand;
+				resultJTF.setText(""+result); // ""+result functions as hacky int -> string conversion
+				break;
+			default:
+				System.out.println("FUCK");
+			}
+		} catch (Exception e)
+		{
+			//empty catch for now.
 		}
 	}
 }
