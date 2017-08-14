@@ -27,9 +27,10 @@ public class GuiSimpleCalculator extends JFrame implements ActionListener{
 	private static final int HEIGHT = 300;
 	private static final int WIDTH = 350;
 	private static final String WINDOW_NAME = "Swing Calculator";
+	private static final int TEXT_FIELD_WIDTH = 15;
 	
-	private JTextField result;
-	private JTextField operand;
+	private JTextField resultJTF;
+	private JTextField operandJTF;
 	
 	public static void main(String args[])
 	{
@@ -50,19 +51,19 @@ public class GuiSimpleCalculator extends JFrame implements ActionListener{
 		JPanel resultPanel = new JPanel();
 		JPanel buttonsPanel = new JPanel();
 		
-		this.result = new JTextField(10);
-		result.setEditable(false);
+		this.resultJTF = new JTextField(TEXT_FIELD_WIDTH);
+		resultJTF.setEditable(false);
 		resultPanel.add(new JLabel("Result:"));
-		resultPanel.add(result);
+		resultPanel.add(resultJTF);
 		JButton resetButton = new JButton("reset");
 		resetButton.setName("reset");
 		resultPanel.add(resetButton);
 		this.add(resultPanel);
 		
-		this.operand = new JTextField(10);
-		operand.setEditable(false);
+		this.operandJTF = new JTextField(TEXT_FIELD_WIDTH);
+		operandJTF.setEditable(false);
 		opPanel.add(new JLabel("Operand:"));
-		opPanel.add(operand);
+		opPanel.add(operandJTF);
 		JButton clearButton = new JButton("clear");
 		clearButton.setName("clear");
 		opPanel.add(clearButton);
@@ -73,7 +74,7 @@ public class GuiSimpleCalculator extends JFrame implements ActionListener{
 		buttonsPanel.setLayout(new GridLayout(4, 3));
 		for(int i = 0; i<=9; i++)
 		{
-			anonymousButton = new JButton(""+i);
+			anonymousButton = new JButton(""+i);//""+1 works as weird hacky string conversion
 			anonymousButton.addActionListener(this);
 			buttonsPanel.add(anonymousButton);
 		}
@@ -90,5 +91,13 @@ public class GuiSimpleCalculator extends JFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		System.out.println("Button: " + ((JButton)arg0.getSource()).getText());
+		try{
+			Integer.parseInt(((JButton)arg0.getSource()).getText());
+			operandJTF.setText(operandJTF.getText() + ((JButton)arg0.getSource()).getText());
+		}
+		catch (Exception e)
+		{
+			//empty catch block
+		}
 	}
 }
