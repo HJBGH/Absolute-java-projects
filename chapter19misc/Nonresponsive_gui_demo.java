@@ -10,12 +10,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 //underscores in the class name shouldn't be done in serious code.
-public class Nonresponsive_gui_demo extends JFrame implements ActionListener
+public class Nonresponsive_gui_demo extends JFrame implements ActionListener, Runnable
 {
-	public static final int WIDTH = 300; //window width;
-	public static final int HEIGHT = 200; //window height;
-	public static final int FILL_WIDTH = 300;
-	public static final int FILL_HEIGHT = 100;
+	public static final int WIDTH = 500; //window width;
+	public static final int HEIGHT = 300; //window height;
+	public static final int FILL_WIDTH = 500;
+	public static final int FILL_HEIGHT = 200;
 	public static final int CIRCLE_SIZE = 10;
 	public static final int PAUSE = 100; //100 millisecond pause duration
 	
@@ -44,10 +44,10 @@ public class Nonresponsive_gui_demo extends JFrame implements ActionListener
 	
 	public void actionPerformed(ActionEvent e)
 	{
-		fill();
+		startThread();
 	}
 	
-	public void fill()
+	public void run()
 	{
 		Graphics g = this.box.getGraphics();
 		
@@ -70,6 +70,12 @@ public class Nonresponsive_gui_demo extends JFrame implements ActionListener
 			System.out.print("Unexpected interrupt");
 			System.exit(0);
 		}
+	}
+	
+	public void startThread()
+	{
+		Thread theThread = new Thread(this);
+		theThread.start();
 	}
 }
 
