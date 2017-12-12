@@ -9,9 +9,10 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.event.ActionListener;
+import java.util.Random;
 import java.awt.event.ActionEvent;
 
-public class ThreadedFillDemo extends JFrame implements ActionListener
+public class ThreadedBounceDemo extends JFrame implements ActionListener
 {
 	public static final int WIDTH = 500; //window width;
 	public static final int HEIGHT = 300; //window height;
@@ -24,14 +25,14 @@ public class ThreadedFillDemo extends JFrame implements ActionListener
 	
 	public static void main(String[] args)
 	{
-		ThreadedFillDemo tfd = new ThreadedFillDemo();
-		tfd.setVisible(true);
+		ThreadedBounceDemo tbd = new ThreadedBounceDemo();
+		tbd.setVisible(true);
 	}
 	
-	public ThreadedFillDemo()
+	public ThreadedBounceDemo()
 	{
 		setSize(WIDTH, HEIGHT);
-		setTitle("Fill Demo");
+		setTitle("Bounce Demo");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
 		this.box = new JPanel();
@@ -45,34 +46,42 @@ public class ThreadedFillDemo extends JFrame implements ActionListener
 	
 	public void actionPerformed(ActionEvent e)
 	{
-		Packer packerThread = new Packer();
-		packerThread.start();
+		Bouncer b = new Bouncer();
+		b.start();
 	}
 	
-	private class Packer extends Thread
+	private class Bouncer extends Thread
 	{
+		Random rand = new Random();
+		private double ball_x = FILL_WIDTH/2;
+		private double ball_y = FILL_HEIGHT/2;
+		private int gs = CIRCLE_SIZE/2; //gs for geschwindigkeit
+		private double v = rand.nextInt(360);
+		
+		
 		public void run()
 		{
 			Graphics g = box.getGraphics(); //I don't like referring to the box variable like this.
-		
-			for(int y = FILL_HEIGHT; y > 0; y = y-CIRCLE_SIZE)
-				for(int x = 0; x < FILL_WIDTH; x = x+CIRCLE_SIZE)
+			
+			while(true)
+			{
+				//check boundaries.
+				if(ball_x + CIRCLE_SIZE >= FILL_WIDTH || ball_x <= 0)
 				{
-					if(x%30 == 0)
-					{
-						g.setColor(Color.BLUE);
-					}
-					else if(x%20 == 0)
-					{
-						g.setColor(Color.RED);
-					}
-					else
-					{
-						g.setColor(Color.WHITE);
-					}
-					g.fillOval(x, y, CIRCLE_SIZE, CIRCLE_SIZE);
-					doNothing(PAUSE); //pause execution for 100 milliseconds
+					v = rand.nextInt(360);
 				}
+				if(ball_y + CIRCLE_SIZE >= FILL_HEIGHT || ball_y <= 0)
+				{
+					v = rand.nextInt(360);
+				}
+				//increment position.
+				ball_x = ball_x + gs * Math.sin(Math.toRadians(v));
+				ball_y = ball_y + gs * Math.cos(Math.toRadians(v));
+				g.setXORMode(getBackground());
+				//I need to redefine paint_component to get this working properly.
+				g.fillOval((int)ball_x, (int)ball_y, CIRCLE_SIZE, CIRCLE_SIZE);
+				doNothing(PAUSE);
+			}
 		}
 	
 		public void doNothing(int ms)
@@ -90,3 +99,4 @@ public class ThreadedFillDemo extends JFrame implements ActionListener
 	}
 	
 }
+
