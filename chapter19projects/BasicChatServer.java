@@ -1,13 +1,18 @@
 package chapter19projects;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
 /**
  * This is basic chat server implemented according the requirements outlined
- * in chapter 19 project 8 of Walter Savitch's Absolute Java.
+ * in chapter 19 project 8 of Walter Savitch's Absolute Java. This is really 
+ * basic architecture without proper safeguards in place for race conditions
+ * nor buffer lengths and other problems that may arise.
  * @author hb
  *
  */
@@ -60,16 +65,61 @@ public class BasicChatServer {
 	private class CommsHandler extends Thread
 	{
 		Socket connection;
+		DataOutputStream dos; //dos for Data Output Stream
+		BufferedReader in;
 		
 		public CommsHandler(Socket newConnection)
 		{
 			connectionCount++; //I shouldn't be incrementing this here
 			this.connection = newConnection;
+			try {
+				dos = new DataOutputStream(connection.getOutputStream());
+				in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			} catch (IOException e) {
+				//man I hope InetAddresses have a toString function.
+				System.out.println("connection from " + connection.getInetAddress() + " failed.");
+				e.printStackTrace();
+			}
 		}
 		
 		public void run()
 		{
-			
+			boolean run = true;
+			String message;
+			while(run)
+			{
+				try
+				{
+					if((message = in.readLine()) != null)
+					{
+						//broadcast message to all listeners
+						for(CommsHandler handler : handlers)
+						{
+							if(handler != this)//hopefully this won't cause any problems 
+							{
+								handler.dos.writeBytes(message);
+							}
+						}
+					}
+				}
+				catch (IOException ioe)
+				{
+					System.out.println("Something died while a message was being read or broadcasted");
+					//operating under the assumption that the connection has just been dropped.
+					try
+					{
+						dos.close();
+						in.close();
+					}
+					catch(IOException ioeTwoElectricBoogaloo) //DAMNIT
+					{
+						//Honestly I don't know how to properly structure this, these nested 
+						//try - catch statements are hideous.
+					}
+				}
+				//eventually there will be a case where run will need to be false.
+				//close everything when it comes. I need to figure out how to poll for a dead connections
+			}
 		}
 	}
 }
