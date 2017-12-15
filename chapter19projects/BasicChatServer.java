@@ -121,6 +121,7 @@ public class BasicChatServer {
 				//Honestly I don't know how to properly structure this, these nested 
 				//try - catch statements are hideous.
 			}
+			handlers.remove(this); //removed reference to the thread from the handler pool.
 		}
 	}
 }
