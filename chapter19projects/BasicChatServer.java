@@ -106,19 +106,20 @@ public class BasicChatServer {
 				{
 					System.out.println("Something died while a message was being read or broadcasted");
 					//operating under the assumption that the connection has just been dropped.
-					try
-					{
-						dos.close();
-						in.close();
-					}
-					catch(IOException ioeTwoElectricBoogaloo) //DAMNIT
-					{
-						//Honestly I don't know how to properly structure this, these nested 
-						//try - catch statements are hideous.
-					}
+					run = false;
 				}
-				//eventually there will be a case where run will need to be false.
-				//close everything when it comes. I need to figure out how to poll for a dead connections
+			}
+			//eventually there will be a case where run will need to be false.
+			//close everything when it comes. I need to figure out how to poll for a dead connections
+			try
+			{
+				dos.close();
+				in.close();
+			}
+			catch(IOException ioeTwoElectricBoogaloo) //DAMNIT
+			{
+				//Honestly I don't know how to properly structure this, these nested 
+				//try - catch statements are hideous.
 			}
 		}
 	}
