@@ -49,12 +49,13 @@ public class BasicChatServer {
 
 	private void serve() throws IOException
 	{
-		System.out.println("Now listening on port number: " + this.port); 
+		 
 		
 		ServerSocket ss = new ServerSocket(this.port);
 		
 		while(true) //I prefer this to for(;;), it's easier to read.
 		{
+			System.out.println("Now listening on port number: " + this.port);
 			Socket clientConnection = ss.accept();
 			CommsHandler comms = new CommsHandler(clientConnection);
 			this.handlers.add(comms);
@@ -75,6 +76,7 @@ public class BasicChatServer {
 			try {
 				dos = new DataOutputStream(connection.getOutputStream());
 				in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+				System.out.println("new connection established, connection number: " + connectionCount);
 			} catch (IOException e) {
 				//man I hope InetAddresses have a toString function.
 				System.out.println("connection from " + connection.getInetAddress() + " failed.");
@@ -85,6 +87,15 @@ public class BasicChatServer {
 		public void run()
 		{
 			boolean run = true;
+			System.out.println("connection handler running.");
+			try {
+				System.out.println("Trying to send welcome");
+				dos.writeBytes("Welcome to the chat server!");
+			} catch (IOException e) {
+				System.out.println("DAMNIT");
+				run = false;
+				e.printStackTrace();
+			}
 			String message;
 			while(run)
 			{
@@ -93,6 +104,7 @@ public class BasicChatServer {
 					if((message = in.readLine()) != null)
 					{
 						//broadcast message to all listeners
+						System.out.println("Broadcasting message '"+ message + "' to all users.");
 						for(CommsHandler handler : handlers)
 						{
 							if(handler != this)//hopefully this won't cause any problems 

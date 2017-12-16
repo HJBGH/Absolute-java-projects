@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 
 /**
- * Chat client for chapter 19 project 8
+ * Chat client for chapter 19 project 8, entire project doesn't work.
  * @author hb
  *
  */
@@ -15,6 +15,9 @@ public class BasicChatClient {
 	private int port = 0;
 	private String server_ip = "";
 	private Socket socket;
+	BufferedReader serverIn;
+	BufferedReader localIn;
+	DataOutputStream localOut;
 	
 	public static void main(String[] args)
 	{
@@ -27,6 +30,7 @@ public class BasicChatClient {
 		try
 		{
 			bcc.connect();
+			bcc.talk();
 		}
 		catch(IOException ioe)
 		{
@@ -49,23 +53,52 @@ public class BasicChatClient {
 		System.out.println("Connecting to server.");
 		socket = new Socket(this.server_ip, this.port);
 		
-		BufferedReader serverIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		BufferedReader clientIn = new BufferedReader(new InputStreamReader(System.in));
-		DataOutputStream clientOut = new DataOutputStream(socket.getOutputStream());
+		serverIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		localIn = new BufferedReader(new InputStreamReader(System.in));
+		localOut = new DataOutputStream(socket.getOutputStream());
 		
 		System.out.println("Connection established, send messages when ready");
+	}
+	
+	//This function is poorly named, but it handles listening and writing to and from the server
+	public void talk() throws IOException
+	{
+		//First create a new thread to listen to the server
+		Thread listener = new Thread(){
+			public void run(){
+				while(true)
+				{
+					System.out.println("Starting listener thread");
+					String incomingMessage = null;
+					try {
+						incomingMessage = serverIn.readLine();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						System.out.println("read failure caught");
+						e.printStackTrace();
+					}
+					if(incomingMessage != null)
+					{
+						System.out.print("Message recieved: ");
+						System.out.println(incomingMessage);
+					}
+				}
+			}
+		};
+		listener.start();
 		
 		while(true)
 		{
-			String incomingMessage;
-			String outgoingMessage;
-			if((incomingMessage = serverIn.readLine()) != null)
+			//READLINE OPERATIONS ARE BLOCKING, HOW COULD I BE SO STUPID?
+			
+			String outgoingMessage = localIn.readLine();
+			System.out.println("Does this even run?");
+			
+			if(outgoingMessage != null)
 			{
-				System.out.println(incomingMessage);
-			}
-			if((outgoingMessage = clientIn.readLine()) != null)
-			{
+				System.out.print("Message sent: ");
 				System.out.println(outgoingMessage);
+				localOut.writeBytes(outgoingMessage);
 			}	
 		}
 	}
