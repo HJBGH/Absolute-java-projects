@@ -15,8 +15,8 @@ public class BasicChatClient {
 	private int port = 0;
 	private String server_ip = "";
 	private Socket socket;
-	BufferedReader serverIn;
-	BufferedReader localIn;
+	public BufferedReader serverIn;
+	public BufferedReader localIn;
 	DataOutputStream localOut;
 	
 	public static void main(String[] args)
@@ -53,6 +53,7 @@ public class BasicChatClient {
 		System.out.println("Connecting to server.");
 		socket = new Socket(this.server_ip, this.port);
 		
+		//these are confusing names
 		serverIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		localIn = new BufferedReader(new InputStreamReader(System.in));
 		localOut = new DataOutputStream(socket.getOutputStream());
@@ -63,43 +64,53 @@ public class BasicChatClient {
 	//This function is poorly named, but it handles listening and writing to and from the server
 	public void talk() throws IOException
 	{
-		//First create a new thread to listen to the server
-		Thread listener = new Thread(){
-			public void run(){
-				while(true)
-				{
-					System.out.println("Starting listener thread");
-					String incomingMessage = null;
-					try {
-						incomingMessage = serverIn.readLine();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						System.out.println("read failure caught");
-						e.printStackTrace();
-					}
-					if(incomingMessage != null)
-					{
-						System.out.print("Message recieved: ");
-						System.out.println(incomingMessage);
-					}
-				}
-			}
-		};
-		listener.start();
-		
+		ChatListener cl = new ChatListener();
+		cl.start();
 		while(true)
 		{
 			//READLINE OPERATIONS ARE BLOCKING, HOW COULD I BE SO STUPID?
-			
+			System.out.println("Waiting for local input.");
+			//blocks here
 			String outgoingMessage = localIn.readLine();
-			System.out.println("Does this even run?");
 			
 			if(outgoingMessage != null)
 			{
 				System.out.print("Message sent: ");
 				System.out.println(outgoingMessage);
+				//blocks here.
 				localOut.writeBytes(outgoingMessage);
+				
 			}	
+		}
+	}
+	
+	private class ChatListener extends Thread
+	{
+		public void run(){
+			System.out.println("Starting listener thread");
+			while(true)
+			{
+				//System.out.println("Listening.");
+				String incomingMessage = null;
+				try {
+					if(serverIn.ready())
+					{
+						System.out.println("Reading message");
+						//blocks here						
+						incomingMessage = serverIn.readLine();
+						System.out.println("Message read");
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					System.out.println("read failure caught");
+					e.printStackTrace();
+				}
+				if(incomingMessage != null)
+				{
+					System.out.print("Message recieved: ");
+					System.out.println(incomingMessage);
+				}
+			}
 		}
 	}
 }

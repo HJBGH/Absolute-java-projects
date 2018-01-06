@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * This is basic chat server implemented according the requirements outlined
  * in chapter 19 project 8 of Walter Savitch's Absolute Java. This is really 
  * basic architecture without proper safeguards in place for race conditions
- * nor buffer lengths and other problems that may arise.
+ * nor buffer overflow and other problems that may arise.
  * @author hb
  *
  */
@@ -59,7 +59,7 @@ public class BasicChatServer {
 			Socket clientConnection = ss.accept();
 			CommsHandler comms = new CommsHandler(clientConnection);
 			this.handlers.add(comms);
-			comms.run();
+			comms.start();
 		}
 	}
 	
@@ -77,8 +77,9 @@ public class BasicChatServer {
 				dos = new DataOutputStream(connection.getOutputStream());
 				in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 				System.out.println("new connection established, connection number: " + connectionCount);
+				//dos.writeBytes("TEST");
 			} catch (IOException e) {
-				//man I hope InetAddresses have a toString function.
+				
 				System.out.println("connection from " + connection.getInetAddress() + " failed.");
 				e.printStackTrace();
 			}
@@ -90,7 +91,10 @@ public class BasicChatServer {
 			System.out.println("connection handler running.");
 			try {
 				System.out.println("Trying to send welcome");
-				dos.writeBytes("Welcome to the chat server!");
+				//blocks here.
+				dos.writeBytes("Welcome to the chat server!\r");
+				//dos.flush();//flushes
+				System.out.println("Welcome sent");
 			} catch (IOException e) {
 				System.out.println("DAMNIT");
 				run = false;
@@ -101,7 +105,10 @@ public class BasicChatServer {
 			{
 				try
 				{
-					if((message = in.readLine()) != null)
+					//blocks here.
+					System.out.println("Waiting for a message");
+					message = in.readLine();
+					if(message != null)
 					{
 						//broadcast message to all listeners
 						System.out.println("Broadcasting message '"+ message + "' to all users.");
@@ -109,10 +116,14 @@ public class BasicChatServer {
 						{
 							if(handler != this)//hopefully this won't cause any problems 
 							{
+								System.out.println("Writing.");
+								//blocks here
 								handler.dos.writeBytes(message);
+								System.out.println("Done writing.");
 							}
 						}
 					}
+					message = null;
 				}
 				catch (IOException ioe)
 				{
