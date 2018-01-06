@@ -78,7 +78,7 @@ public class BasicChatClient {
 				System.out.print("Message sent: ");
 				System.out.println(outgoingMessage);
 				//blocks here.
-				localOut.writeBytes(outgoingMessage);
+				localOut.writeBytes(outgoingMessage + "\r");
 				
 			}	
 		}

@@ -107,6 +107,7 @@ public class BasicChatServer {
 				{
 					//blocks here.
 					System.out.println("Waiting for a message");
+					while(!in.ready());
 					message = in.readLine();
 					if(message != null)
 					{
@@ -118,7 +119,8 @@ public class BasicChatServer {
 							{
 								System.out.println("Writing.");
 								//blocks here
-								handler.dos.writeBytes(message);
+								handler.dos.writeBytes(message + "\r");
+								//I suspect that there's a method that trims the "\r" from sent messages
 								System.out.println("Done writing.");
 							}
 						}
